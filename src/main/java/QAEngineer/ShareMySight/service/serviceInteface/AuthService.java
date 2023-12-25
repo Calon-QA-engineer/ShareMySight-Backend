@@ -1,6 +1,6 @@
 package QAEngineer.ShareMySight.service.serviceInteface;
 
-import QAEngineer.ShareMySight.model.AuthenticationResponse;
+import QAEngineer.ShareMySight.model.response.AuthenticationResponse;
 import QAEngineer.ShareMySight.model.LoginRequest;
 import QAEngineer.ShareMySight.model.RegisterRequest;
 

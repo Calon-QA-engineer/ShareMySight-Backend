@@ -3,7 +3,7 @@ package QAEngineer.ShareMySight.service.serviceImpl;
 import QAEngineer.ShareMySight.entity.Language;
 import QAEngineer.ShareMySight.entity.User;
 import QAEngineer.ShareMySight.exception.CustomException;
-import QAEngineer.ShareMySight.model.AuthenticationResponse;
+import QAEngineer.ShareMySight.model.response.AuthenticationResponse;
 import QAEngineer.ShareMySight.model.LoginRequest;
 import QAEngineer.ShareMySight.model.RegisterRequest;
 import QAEngineer.ShareMySight.repository.LanguageRepository;
@@ -12,8 +12,10 @@ import QAEngineer.ShareMySight.security.JwtTokenUtil;
 import QAEngineer.ShareMySight.service.serviceInteface.AuthService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +38,7 @@ public class AuthServiceImpl implements AuthService {
         // Check if any required field is empty or null
         if (isEmpty(request.getEmail()) || isEmpty(request.getPassword())
                 || isEmpty(request.getLanguageId()) || isEmpty(request.getRole())) {
-            throw new CustomException("All user fields are required", 400);
+            throw new CustomException("All user fields are required", HttpStatus.BAD_REQUEST);
         }
 
         // if user already registered, it is an error
@@ -47,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
 
         // Fetch the language using languageId from the request
         Language language = languageRepository.findById(request.getLanguageId())
-                .orElseThrow(() -> new CustomException("Language not found", 404));
+                .orElseThrow(() -> new CustomException("Language not found", HttpStatus.NOT_FOUND));
 
         User newUser = User.builder()
                 .email(request.getEmail())
@@ -62,17 +64,15 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthenticationResponse login(LoginRequest request) {
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getPassword()
-                )
+          new UsernamePasswordAuthenticationToken(
+            request.getEmail(),
+            request.getPassword()
+          )
         );
-
-
 
         Optional<User> user = userRepository.findByEmail(request.getEmail());
         if (user.isEmpty()) {
-            throw new CustomException("User not registered yet", 400);
+            throw new CustomException("User not registered yet", HttpStatus.BAD_REQUEST);
         }
 
         String jwtToken = jwtTokenUtil.generateToken(user.get());
