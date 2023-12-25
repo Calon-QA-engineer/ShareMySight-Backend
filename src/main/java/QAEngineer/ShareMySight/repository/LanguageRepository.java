@@ -7,5 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface LanguageRepository extends MongoRepository<Language, Object> {
+public interface LanguageRepository extends MongoRepository<Language, String> {
+  Optional<Language> findByLanguageName(String languageName);
 }

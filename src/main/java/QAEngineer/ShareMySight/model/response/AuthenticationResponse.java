@@ -1,4 +1,4 @@
-package QAEngineer.ShareMySight.model;
+package QAEngineer.ShareMySight.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
