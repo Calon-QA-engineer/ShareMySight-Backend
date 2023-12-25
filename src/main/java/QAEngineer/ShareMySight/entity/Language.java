@@ -1,41 +1,40 @@
 package QAEngineer.ShareMySight.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.annotation.*;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="languages")
+@Document(collection = "languages")
 public class Language {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID languageId;
+    @Indexed(unique=true)
+    private String id;
 
-    @Column(name="language_name")
+    @Field(name = "language_name")
     private String languageName;
 
-    @Column(name="status_record")
+    @Field(name = "status_record")
     private char statusRecord;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Field(name = "created_at")
     private Date createdAt;
 
     @LastModifiedDate
-    @Column(name = "updated_at")
+    @Field(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    @OneToOne(mappedBy = "language")
-    private User user;
 }
 

@@ -1,26 +1,33 @@
 package QAEngineer.ShareMySight.service.serviceImpl;
 
+import QAEngineer.ShareMySight.entity.Language;
 import QAEngineer.ShareMySight.entity.User;
 import QAEngineer.ShareMySight.exception.CustomException;
 import QAEngineer.ShareMySight.model.AuthenticationResponse;
 import QAEngineer.ShareMySight.model.LoginRequest;
 import QAEngineer.ShareMySight.model.RegisterRequest;
+import QAEngineer.ShareMySight.repository.LanguageRepository;
 import QAEngineer.ShareMySight.repository.UserRepository;
 import QAEngineer.ShareMySight.security.JwtTokenUtil;
 import QAEngineer.ShareMySight.service.serviceInteface.AuthService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
+    private final LanguageRepository languageRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void register(RegisterRequest request) {
@@ -37,10 +44,16 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("User already registered");
         }
 
+
+        // Fetch the language using languageId from the request
+        Language language = languageRepository.findById(request.getLanguageId())
+                .orElseThrow(() -> new CustomException("Language not found", 404));
+
         User newUser = User.builder()
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
+                .language(language)
                 .statusRecord('A').build();
 
         userRepository.save(newUser);
@@ -54,6 +67,8 @@ public class AuthServiceImpl implements AuthService {
                         request.getPassword()
                 )
         );
+
+
 
         Optional<User> user = userRepository.findByEmail(request.getEmail());
         if (user.isEmpty()) {
@@ -72,5 +87,4 @@ public class AuthServiceImpl implements AuthService {
         }
         return value == null;
     }
-
 }
