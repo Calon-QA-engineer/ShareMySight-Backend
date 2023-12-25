@@ -1,4 +1,4 @@
-package QAEngineer.ShareMySight.model;
+package QAEngineer.ShareMySight.model.request;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;

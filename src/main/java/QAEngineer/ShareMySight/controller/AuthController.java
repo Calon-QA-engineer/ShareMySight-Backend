@@ -1,8 +1,8 @@
 package QAEngineer.ShareMySight.controller;
 
 import QAEngineer.ShareMySight.model.response.AuthenticationResponse;
-import QAEngineer.ShareMySight.model.LoginRequest;
-import QAEngineer.ShareMySight.model.RegisterRequest;
+import QAEngineer.ShareMySight.model.request.LoginRequest;
+import QAEngineer.ShareMySight.model.request.RegisterRequest;
 import QAEngineer.ShareMySight.model.response.StandardResponse;
 import QAEngineer.ShareMySight.service.serviceImpl.AuthServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;

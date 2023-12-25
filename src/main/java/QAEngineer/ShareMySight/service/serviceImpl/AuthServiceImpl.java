@@ -4,8 +4,8 @@ import QAEngineer.ShareMySight.entity.Language;
 import QAEngineer.ShareMySight.entity.User;
 import QAEngineer.ShareMySight.exception.CustomException;
 import QAEngineer.ShareMySight.model.response.AuthenticationResponse;
-import QAEngineer.ShareMySight.model.LoginRequest;
-import QAEngineer.ShareMySight.model.RegisterRequest;
+import QAEngineer.ShareMySight.model.request.LoginRequest;
+import QAEngineer.ShareMySight.model.request.RegisterRequest;
 import QAEngineer.ShareMySight.repository.LanguageRepository;
 import QAEngineer.ShareMySight.repository.UserRepository;
 import QAEngineer.ShareMySight.security.JwtTokenUtil;
@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

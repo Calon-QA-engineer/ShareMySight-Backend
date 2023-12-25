@@ -1,4 +1,4 @@
-package QAEngineer.ShareMySight.model;
+package QAEngineer.ShareMySight.model.request;
 
 import QAEngineer.ShareMySight.entity.Language;
 import lombok.AllArgsConstructor;
