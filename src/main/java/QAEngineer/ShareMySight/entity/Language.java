@@ -3,6 +3,7 @@ package QAEngineer.ShareMySight.entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.*;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.UUID;
 
+@Builder
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -35,6 +37,6 @@ public class Language {
 
     @LastModifiedDate
     @Field(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 }
 
