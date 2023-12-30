@@ -6,7 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.2.1</version>
-		<relativePath/> <!-- lookup parent from repository -->
+		<relativePath/>
 	</parent>
 	<groupId>QAEngineer</groupId>
 	<artifactId>ShareMySight</artifactId>
@@ -85,23 +85,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<version>3.2.1</version>
 				<configuration>
-					<excludes>
-						<exclude>
-							<groupId>org.projectlombok</groupId>
-							<artifactId>lombok</artifactId>
-						</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.flywaydb</groupId>
-				<artifactId>flyway-maven-plugin</artifactId>
-				<version>9.22.3</version>
-				<configuration>
-					<url>jdbc:postgresql://localhost:5432/chat</url>
-					<user>postgres</user>
-					<password>postgres</password>
-					<cleanDisabled>false</cleanDisabled>
+					<mainClass>QAEngineer.ShareMySight.ShareMySightApplication</mainClass>
 				</configuration>
 			</plugin>
 			<plugin>

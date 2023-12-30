@@ -1,4 +1,4 @@
-package QAEngineer.ShareMySight.model;
+package QAEngineer.ShareMySight.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Message {
+public class MessageRequest {
     private String content;
-    private String sender;
 }
