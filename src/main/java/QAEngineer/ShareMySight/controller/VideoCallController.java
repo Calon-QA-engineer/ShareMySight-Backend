@@ -28,7 +28,6 @@ public class VideoCallController {
       .status(true)
       .message("Waiting for other to join...")
       .data(randomRoom)
-      .code(200)
       .build();
     return new ResponseEntity<>(standardResponse, HttpStatus.OK);
   }
@@ -44,7 +43,6 @@ public class VideoCallController {
       .status(true)
       .message("Waiting for other to join...")
       .data(null)
-      .code(201)
       .build();
     return new ResponseEntity<>(standardResponse, HttpStatus.CREATED);
   }
@@ -59,7 +57,6 @@ public class VideoCallController {
       .status(true)
       .message("Waiting for other to join...")
       .data(null)
-      .code(200)
       .build();
     return new ResponseEntity<>(standardResponse, HttpStatus.OK);
   }
