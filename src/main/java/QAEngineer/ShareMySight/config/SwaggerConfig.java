@@ -11,12 +11,10 @@ import org.springframework.http.HttpHeaders;
 @Configuration
 @OpenAPIDefinition(info = @Info(title = "ShareMySight", version = "1.0.0"))
 @SecurityScheme(
-  type = SecuritySchemeType.HTTP,
-  name = "Authorization",
-  description = "JWT Authorization header using the Bearer scheme.",
-  scheme = "bearer",
-  in = SecuritySchemeIn.HEADER,
-  paramName = HttpHeaders.AUTHORIZATION
+  type = SecuritySchemeType.APIKEY,
+  name = "access_token",
+  description = "JWT using cookie",
+  in = SecuritySchemeIn.COOKIE
 )
 public class SwaggerConfig {
 }

@@ -2,6 +2,7 @@ package QAEngineer.ShareMySight.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -25,17 +27,39 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        final String requestURI = request.getRequestURI();
+        if (
+            requestURI.endsWith("/swagger-ui/index.html")
+              || requestURI.endsWith("/swagger-ui.html")
+              || requestURI.endsWith("/v3/api-docs")
+              || requestURI.endsWith(".css")
+              || requestURI.endsWith(".js")
+              || requestURI.endsWith(".png")
+              || requestURI.endsWith("swagger-config")
+        ) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         // 1. check the jwt token
-        final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (header == null || !header.startsWith("Bearer ")) {
+        String token = null;
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("access_token".equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        // 2. Get jwt token and validate the token
-        final String token = header.split(" ")[1].trim();
         String userEmail = jwtTokenUtil.extractUsername(token);
-
         // 3. if the token corresponds to a user in the db but the user currently is not authenticated yet, we want to update the security context
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);

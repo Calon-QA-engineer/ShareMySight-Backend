@@ -21,7 +21,6 @@ public class GlobalException {
     public ResponseEntity<StandardResponse<Object>> handleCustomException(CustomException ex) {
         StandardResponse<Object> response = StandardResponse.<Object>builder()
                 .status(false)
-                .code(ex.getCode().value())
                 .message(ex.getMessage())
                 .data(null)
                 .build();
@@ -33,7 +32,6 @@ public class GlobalException {
     public ResponseEntity<Object> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
         StandardResponse<Object> response = StandardResponse.<Object>builder()
                 .status(false)
-                .code(400)
                 .message(ex.getMessage())
                 .data(null)
                 .build();
@@ -45,7 +43,6 @@ public class GlobalException {
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
         StandardResponse<Object> response = StandardResponse.<Object>builder()
                 .status(false)
-                .code(400)
                 .message(ex.getMessage())
                 .data(null)
                 .build();

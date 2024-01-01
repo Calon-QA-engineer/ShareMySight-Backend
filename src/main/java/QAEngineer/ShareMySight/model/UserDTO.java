@@ -1,4 +1,4 @@
-package QAEngineer.ShareMySight.model.response;
+package QAEngineer.ShareMySight.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,10 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
+@Builder
+public class UserDTO {
+    private String id;
     private String email;
-    private String token;
+    private String role;
 }

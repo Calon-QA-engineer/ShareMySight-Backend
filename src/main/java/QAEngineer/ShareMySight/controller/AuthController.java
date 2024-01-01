@@ -29,7 +29,6 @@ public class AuthController {
         authService.register(request);
         StandardResponse<Object> response = StandardResponse.<Object>builder()
                 .status(true)
-                .code(201)
                 .message("user registered")
                 .data(null)
                 .build();
@@ -42,7 +41,6 @@ public class AuthController {
         AuthenticationResponse authToken = authService.login(request);
         StandardResponse<AuthenticationResponse> response = StandardResponse.<AuthenticationResponse>builder()
                 .status(true)
-                .code(200)
                 .message("authenticated")
                 .data(authToken)
                 .build();
