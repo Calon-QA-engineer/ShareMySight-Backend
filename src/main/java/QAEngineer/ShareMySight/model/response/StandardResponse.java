@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class StandardResponse <T> {
     private boolean status; // t or f berdasarkan resopnse berhasil/tidak
-    private Integer code; // status code
     private String message;
     private T data; // DTO object
 }
