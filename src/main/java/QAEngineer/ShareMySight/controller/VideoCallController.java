@@ -5,6 +5,7 @@ import QAEngineer.ShareMySight.model.request.AddVideoCallRoomRequest;
 import QAEngineer.ShareMySight.model.response.StandardResponse;
 import QAEngineer.ShareMySight.service.serviceInteface.VideoCallRoomService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -22,8 +23,8 @@ public class VideoCallController {
   
   @Operation(summary = "Get Random Video Call Room")
   @GetMapping
-  public ResponseEntity<StandardResponse<Object>> get(HttpServletRequest httpServletRequest) {
-    VideoCallRoom randomRoom = videoCallRoomService.getRandomRoom(httpServletRequest);
+  public ResponseEntity<StandardResponse<Object>> get() {
+    VideoCallRoom randomRoom = videoCallRoomService.getRandomRoom();
     StandardResponse<Object> standardResponse = StandardResponse.builder()
       .status(true)
       .message("Waiting for other to join...")
@@ -36,10 +37,9 @@ public class VideoCallController {
   @Operation(summary = "Add Generated Video Call Room")
   @PostMapping
   public ResponseEntity<StandardResponse<Object>> add(
-    HttpServletRequest httpServletRequest,
     @RequestBody @Valid AddVideoCallRoomRequest addVideoCallRoomRequest
   ) {
-    videoCallRoomService.addRoom(httpServletRequest, addVideoCallRoomRequest.getRoomId());
+    videoCallRoomService.addRoom(addVideoCallRoomRequest.getRoomId());
     StandardResponse<Object> standardResponse = StandardResponse.builder()
       .status(true)
       .message("Waiting for other to join...")
