@@ -1,6 +1,7 @@
 package QAEngineer.ShareMySight.controller;
 
-import QAEngineer.ShareMySight.model.CallUserDto;
+import QAEngineer.ShareMySight.model.request.CallUserRequest;
+import QAEngineer.ShareMySight.model.response.CallUserResponse;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
@@ -20,7 +21,7 @@ public class SocketIOController {
     this.server = server;
     server.addConnectListener(onConnected());
     server.addDisconnectListener(onDisconnected());
-    server.addEventListener("callUser", CallUserDto.class, onCallUser());
+    server.addEventListener("callUser", CallUserRequest.class, onCallUser());
   }
   
   private ConnectListener onConnected() {
@@ -37,12 +38,20 @@ public class SocketIOController {
     };
   }
   
-  private DataListener<CallUserDto> onCallUser() {
-    return (socketIOClient, callUserDto, ackRequest) -> {
+  private DataListener<CallUserRequest> onCallUser() {
+    return (socketIOClient, callUserRequest, ackRequest) -> {
       log.info("Call User[{}]", socketIOClient.getSessionId().toString());
-      log.info("Call User data >>> {}", callUserDto);
-      SocketIOClient targetedClient = server.getClient(UUID.fromString(callUserDto.getUserToCall()));
-      targetedClient.sendEvent("callUser", callUserDto);
+      log.info("Call User data >>> {}", callUserRequest);
+      SocketIOClient targetedClient = server.getClient(UUID.fromString(callUserRequest.getUserToCall()));
+      CallUserResponse callUserResponse = CallUserResponse.builder()
+        .from(callUserRequest.getFrom())
+        .name(callUserRequest.getName())
+        .signal(callUserRequest.getSignalData())
+        .build();
+      targetedClient.sendEvent(
+        "callUser",
+          callUserResponse
+        );
     };
   }
 }

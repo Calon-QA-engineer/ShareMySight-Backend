@@ -1,9 +1,9 @@
-package QAEngineer.ShareMySight.model;
+package QAEngineer.ShareMySight.model.request;
 
 import lombok.*;
 
-@Data
-public class CallUserDto {
+@Getter
+public class CallUserRequest {
   private String userToCall;
   private Object signalData;
   private String from;
