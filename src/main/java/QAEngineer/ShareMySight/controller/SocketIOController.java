@@ -1,5 +1,6 @@
 package QAEngineer.ShareMySight.controller;
 
+import QAEngineer.ShareMySight.model.request.AnswerCallRequest;
 import QAEngineer.ShareMySight.model.request.CallUserRequest;
 import QAEngineer.ShareMySight.model.response.CallUserResponse;
 import com.corundumstudio.socketio.SocketIOClient;
@@ -22,6 +23,7 @@ public class SocketIOController {
     server.addConnectListener(onConnected());
     server.addDisconnectListener(onDisconnected());
     server.addEventListener("callUser", CallUserRequest.class, onCallUser());
+    server.addEventListener("answerCall", AnswerCallRequest.class, onAnswerCall());
   }
   
   private ConnectListener onConnected() {
@@ -52,6 +54,14 @@ public class SocketIOController {
         "callUser",
           callUserResponse
         );
+    };
+  }
+  
+  private DataListener<AnswerCallRequest> onAnswerCall() {
+    return (socketIOClient, answerCallRequest, ackRequest) -> {
+      log.info("Call Answer from {}", socketIOClient.getSessionId().toString());
+      SocketIOClient targetedClient = server.getClient(UUID.fromString(answerCallRequest.getTo()));
+      targetedClient.sendEvent("callAccepted", answerCallRequest.getSignal());
     };
   }
 }
