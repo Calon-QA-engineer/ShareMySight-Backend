@@ -45,6 +45,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
+        log.info(token);
+
         String userEmail = jwtTokenUtil.extractUsername(token);
         // 3. if the token corresponds to a user in the db but the user currently is not authenticated yet, we want to update the security context
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {

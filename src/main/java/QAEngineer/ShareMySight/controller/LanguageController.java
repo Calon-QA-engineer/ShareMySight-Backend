@@ -16,14 +16,12 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "language")
-@Slf4j
 public class LanguageController {
   private final LanguageService languageService;
 
   @GetMapping
   public ResponseEntity<StandardResponse<List<LanguageDTO>>> findAll() {
     List<LanguageDTO> languages = languageService.findAll();
-    log.info("test");
     StandardResponse<List<LanguageDTO>> response = StandardResponse.<List<LanguageDTO>>builder()
             .status(true)
             .message("Language added")

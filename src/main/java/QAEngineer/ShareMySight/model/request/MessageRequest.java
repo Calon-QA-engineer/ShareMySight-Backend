@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageRequest {
-    private String content;
+    private String message;
+    private String image;
 }
