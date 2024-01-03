@@ -46,10 +46,10 @@ public class User implements UserDetails {
     @CreatedDate
     @Field(name = "created_at")
     private Date createdAt;
-
+    
     @LastModifiedDate
     @Field(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

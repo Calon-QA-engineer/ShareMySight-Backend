@@ -41,5 +41,5 @@ public class GlobalChat {
 
     @LastModifiedDate
     @Field(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private Date updatedAt;
 }
