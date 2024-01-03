@@ -17,10 +17,12 @@ public interface VideoCallSessionService {
   
   void updateToOpenCall(String socketSessionId);
   
+  void updateToOnCall(String socketSessionId);
+  
   void updateToCloseCall(String socketSessionId);
   
   List<VideoCallSession> getAll(
-    Iterable<String> socketSessionIds,
+    List<String> socketSessionIds,
     VideoCallStatus videoCallStatus,
     char statusRecord
   );

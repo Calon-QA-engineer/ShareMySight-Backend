@@ -51,6 +51,16 @@ public class VideoCallSessionServiceImpl implements VideoCallSessionService {
   }
   
   @Override
+  public void updateToOnCall(String socketSessionId) {
+    VideoCallSession videoCallSession = repository.findBySocketSessionIdAndStatusRecord(
+      socketSessionId,
+      'A'
+    ).orElse(null);
+    videoCallSession.setVideoCallStatus(VideoCallStatus.ON_CALL);
+    repository.save(videoCallSession);
+  }
+  
+  @Override
   public void updateToCloseCall(String socketSessionId) {
     VideoCallSession videoCallSession = repository.findBySocketSessionIdAndStatusRecord(
       socketSessionId,
@@ -62,11 +72,11 @@ public class VideoCallSessionServiceImpl implements VideoCallSessionService {
   
   @Override
   public List<VideoCallSession> getAll(
-    Iterable<String> socketSessionIds,
+    List<String> socketSessionIds,
     VideoCallStatus videoCallStatus,
     char statusRecord
   ) {
-    List<VideoCallSession> videoCallSessions = repository.findAllById(socketSessionIds);
+    List<VideoCallSession> videoCallSessions = repository.findAllBySocketSessionIdIn(socketSessionIds);
     for (VideoCallSession videoCallSession : videoCallSessions) {
       log.info("findAllById (Iterable) >>>>>>>>>> {}", videoCallSession.getSocketSessionId());
     }

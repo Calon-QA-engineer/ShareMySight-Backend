@@ -34,6 +34,7 @@ public class SocketIOController {
     server.addEventListener("callUser", CallUserRequest.class, onCallUser());
     server.addEventListener("answerCall", AnswerCallRequest.class, onAnswerCall());
     server.addEventListener("startRandomCall", CallUserRequest.class, onCallRandom());
+    server.addEventListener("goingRandomCall", AnswerCallRequest.class, onGoingRandomCall());
   }
   
   private ConnectListener onConnected() {
@@ -87,6 +88,15 @@ public class SocketIOController {
     };
   }
   
+  private DataListener<AnswerCallRequest> onGoingRandomCall() {
+    return (client, data, ackSender) -> {
+      log.info(">>>>>>>> {}", data.getTo());
+      SocketIOClient targetedClient = server.getClient(UUID.fromString(data.getTo()));
+      videoCallSessionService.updateToOnCall(targetedClient.getSessionId().toString());
+      targetedClient.sendEvent("callAccepted", data.getSignal());
+    };
+  }
+  
   private DataListener<CallUserRequest> onCallRandom() {
     return (socketIOClient, callUserRequest, ackRequest) -> {
       log.info("Random call from {}", socketIOClient.getSessionId().toString());
@@ -102,9 +112,9 @@ public class SocketIOController {
         .toList();
       log.info("otherClients >>>>>>>> {}", Arrays.toString(otherClients.toArray()));
       if (!otherClients.isEmpty()) {
-        Iterable<String> socketSessionIds = otherClients.stream()
+        List<String> socketSessionIds = otherClients.stream()
           .map(client -> client.getSessionId().toString())
-          .collect(Collectors.toList());
+          .toList();
         socketSessionIds.forEach(s -> log.info("iterable socket session id >>>> {}", s));
         List<VideoCallSession> videoCallSessions = videoCallSessionService.getAll(
           socketSessionIds,

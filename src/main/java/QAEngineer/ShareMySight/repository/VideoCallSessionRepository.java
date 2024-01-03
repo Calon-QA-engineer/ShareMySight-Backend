@@ -20,4 +20,6 @@ public interface VideoCallSessionRepository extends MongoRepository<VideoCallSes
     VideoCallStatus videoCallStatus,
     char statusRecord
   );
+  
+  List<VideoCallSession> findAllBySocketSessionIdIn(List<String> socketSessionIds);
 }
