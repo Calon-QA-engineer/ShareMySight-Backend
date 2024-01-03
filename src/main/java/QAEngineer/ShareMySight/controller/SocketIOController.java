@@ -1,8 +1,11 @@
 package QAEngineer.ShareMySight.controller;
 
+import QAEngineer.ShareMySight.entity.VideoCallSession;
+import QAEngineer.ShareMySight.enums.VideoCallStatus;
 import QAEngineer.ShareMySight.model.request.AnswerCallRequest;
 import QAEngineer.ShareMySight.model.request.CallUserRequest;
 import QAEngineer.ShareMySight.model.response.CallUserResponse;
+import QAEngineer.ShareMySight.service.serviceInteface.VideoCallSessionService;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.ConnectListener;
@@ -11,32 +14,51 @@ import com.corundumstudio.socketio.listener.DisconnectListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
 public class SocketIOController {
   private final SocketIOServer server;
+  private final VideoCallSessionService videoCallSessionService;
   
-  public SocketIOController(SocketIOServer server) {
+  public SocketIOController(
+    SocketIOServer server,
+    VideoCallSessionService videoCallSessionService
+  ) {
     this.server = server;
+    this.videoCallSessionService = videoCallSessionService;
     server.addConnectListener(onConnected());
     server.addDisconnectListener(onDisconnected());
     server.addEventListener("callUser", CallUserRequest.class, onCallUser());
     server.addEventListener("answerCall", AnswerCallRequest.class, onAnswerCall());
+    server.addEventListener("startRandomCall", CallUserRequest.class, onCallRandom());
   }
   
   private ConnectListener onConnected() {
     return socketIOClient -> {
       log.info("Socket ID[{}] Connected to socket", socketIOClient.getSessionId().toString());
       socketIOClient.sendEvent("me", socketIOClient.getSessionId().toString());
+      
+      String mySocketSessionId = socketIOClient.getSessionId().toString();
+      VideoCallSession myVideoCallSession = videoCallSessionService.find(
+        mySocketSessionId,
+        'A'
+      );
+      
+      if (myVideoCallSession == null) {
+        videoCallSessionService.add(mySocketSessionId);
+      }
     };
   }
   
   private DisconnectListener onDisconnected() {
     return socketIOClient -> {
-      log.info("Client[{}] - Disconnected from socket", socketIOClient.getSessionId().toString());
+      String mySocketSessionId = socketIOClient.getSessionId().toString();
+      log.info("Client[{}] - Disconnected from socket", mySocketSessionId);
       socketIOClient.getNamespace().getBroadcastOperations().sendEvent("callEnded");
+      videoCallSessionService.delete(mySocketSessionId);
     };
   }
   
@@ -62,6 +84,48 @@ public class SocketIOController {
       log.info("Call Answer from {}", socketIOClient.getSessionId().toString());
       SocketIOClient targetedClient = server.getClient(UUID.fromString(answerCallRequest.getTo()));
       targetedClient.sendEvent("callAccepted", answerCallRequest.getSignal());
+    };
+  }
+  
+  private DataListener<CallUserRequest> onCallRandom() {
+    return (socketIOClient, callUserRequest, ackRequest) -> {
+      log.info("Random call from {}", socketIOClient.getSessionId().toString());
+      String mySocketSessionId = socketIOClient.getSessionId().toString();
+      
+      videoCallSessionService.updateToOpenCall(mySocketSessionId);
+      
+      List<SocketIOClient> otherClients = server.getAllClients()
+        .stream()
+        .filter(
+        (client) -> !Objects.equals(client.getSessionId().toString(), mySocketSessionId)
+        )
+        .toList();
+      log.info("otherClients >>>>>>>> {}", Arrays.toString(otherClients.toArray()));
+      if (!otherClients.isEmpty()) {
+        Iterable<String> socketSessionIds = otherClients.stream()
+          .map(client -> client.getSessionId().toString())
+          .collect(Collectors.toList());
+        socketSessionIds.forEach(s -> log.info("iterable socket session id >>>> {}", s));
+        List<VideoCallSession> videoCallSessions = videoCallSessionService.getAll(
+          socketSessionIds,
+          VideoCallStatus.OPEN_CALL,
+          'A'
+        );
+        log.info("videoCallSessions >>>>>>>> {}", videoCallSessions);
+        if (!videoCallSessions.isEmpty()) {
+          Collections.shuffle(videoCallSessions);
+          VideoCallSession videoCallSession = videoCallSessions.get(0);
+          log.info("target socketSessionId >>>>>>>> {}", videoCallSession.getSocketSessionId());
+          
+          SocketIOClient targetedClient = server.getClient(UUID.fromString(videoCallSession.getSocketSessionId()));
+          CallUserResponse callUserResponse = CallUserResponse.builder()
+            .from(callUserRequest.getFrom())
+            .name(callUserRequest.getName())
+            .signal(callUserRequest.getSignalData())
+            .build();
+          targetedClient.sendEvent("startRandomCall", callUserResponse);
+        }
+      }
     };
   }
 }
