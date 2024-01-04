@@ -9,8 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AIChatResponse {
-    private String id;
+public class AIPromptResponse {
+    private String promptId;
     private String imageUrl;
+    private String text;
     private String description;
 }

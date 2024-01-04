@@ -32,6 +32,9 @@ public class AIChat {
     @Field(name = "description")
     private String description;
 
+    @Field(name = "text")
+    private String text;
+
     @DBRef
     @Field(name = "user")
     private User user;
