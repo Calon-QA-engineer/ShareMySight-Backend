@@ -43,8 +43,7 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/swagger-ui.html",
             "/register",
-            "/login",
-            "/**"
+            "/login"
     };
 
     @Bean
