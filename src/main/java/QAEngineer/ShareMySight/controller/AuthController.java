@@ -5,6 +5,7 @@ import QAEngineer.ShareMySight.model.request.LoginRequest;
 import QAEngineer.ShareMySight.model.request.RegisterRequest;
 import QAEngineer.ShareMySight.model.response.StandardResponse;
 import QAEngineer.ShareMySight.service.serviceImpl.AuthServiceImpl;
+import QAEngineer.ShareMySight.service.serviceInteface.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthenticationManager authenticationManager;
-    private final AuthServiceImpl authService;
+    private final AuthService authService;
 
     @Operation(summary = "Register")
     @PostMapping("/register")

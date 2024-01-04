@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationResponse {
-    private String email;
-    private String token;
-    private String username;
-    private String role;
+public class AIPromptResponse {
+    private String promptId;
+    private String imageUrl;
+    private String text;
+    private String description;
 }

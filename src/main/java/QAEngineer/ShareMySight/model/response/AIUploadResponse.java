@@ -1,4 +1,4 @@
-package QAEngineer.ShareMySight.model.request;
+package QAEngineer.ShareMySight.model.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageRequest {
-    private String message;
-    private String image;
+public class AIUploadResponse {
+    private String id;
+    private String imageUrl;
+    private String text;
 }

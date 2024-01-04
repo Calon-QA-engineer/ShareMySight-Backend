@@ -34,8 +34,9 @@ public class ChatServiceImpl implements ChatService {
                 .build();
 
         GlobalChat newMessage = GlobalChat.builder()
-                .message(messageRequest.getContent())
+                .message(messageRequest.getMessage())
                 .user(userDTO)
+                .statusRecord('A')
                 .build();
 
         chatRepository.save(newMessage);
