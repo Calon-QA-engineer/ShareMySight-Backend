@@ -127,6 +127,7 @@ public class SocketIOController {
           log.info("target socketSessionId >>>>>>>> {}", videoCallSession.getSocketSessionId());
           
           SocketIOClient targetedClient = server.getClient(UUID.fromString(videoCallSession.getSocketSessionId()));
+          log.info("callUserRequest.getSignalData >>>> {}", callUserRequest.getSignalData());
           CallUserResponse callUserResponse = CallUserResponse.builder()
             .from(callUserRequest.getFrom())
             .name(callUserRequest.getName())
