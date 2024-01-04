@@ -77,9 +77,6 @@ public class VideoCallSessionServiceImpl implements VideoCallSessionService {
     char statusRecord
   ) {
     List<VideoCallSession> videoCallSessions = repository.findAllBySocketSessionIdIn(socketSessionIds);
-    for (VideoCallSession videoCallSession : videoCallSessions) {
-      log.info("findAllById (Iterable) >>>>>>>>>> {}", videoCallSession.getSocketSessionId());
-    }
     if (videoCallSessions.isEmpty()) {
       return null;
     }

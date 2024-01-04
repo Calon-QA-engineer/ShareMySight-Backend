@@ -115,7 +115,6 @@ public class SocketIOController {
         List<String> socketSessionIds = otherClients.stream()
           .map(client -> client.getSessionId().toString())
           .toList();
-        socketSessionIds.forEach(s -> log.info("iterable socket session id >>>> {}", s));
         List<VideoCallSession> videoCallSessions = videoCallSessionService.getAll(
           socketSessionIds,
           VideoCallStatus.OPEN_CALL,
@@ -128,6 +127,7 @@ public class SocketIOController {
           log.info("target socketSessionId >>>>>>>> {}", videoCallSession.getSocketSessionId());
           
           SocketIOClient targetedClient = server.getClient(UUID.fromString(videoCallSession.getSocketSessionId()));
+          log.info("callUserRequest.getSignalData >>>> {}", callUserRequest.getSignalData());
           CallUserResponse callUserResponse = CallUserResponse.builder()
             .from(callUserRequest.getFrom())
             .name(callUserRequest.getName())
