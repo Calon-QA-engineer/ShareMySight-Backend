@@ -1,14 +1,13 @@
 package QAEngineer.ShareMySight.service.serviceInteface;
 
 import QAEngineer.ShareMySight.entity.VideoCallRoom;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface VideoCallRoomService {
-  VideoCallRoom getRandomRoom(HttpServletRequest httpServletRequest);
+  VideoCallRoom getRandomRoom();
   
-  void addRoom(HttpServletRequest httpServletRequest, String roomId);
+  void addRoom(String roomId);
   
   void deleteRoom(String id);
 }

@@ -5,10 +5,10 @@ import QAEngineer.ShareMySight.exception.CustomException;
 import QAEngineer.ShareMySight.repository.VideoCallRoomRepository;
 import QAEngineer.ShareMySight.security.JwtTokenUtil;
 import QAEngineer.ShareMySight.service.serviceInteface.VideoCallRoomService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -22,9 +22,13 @@ public class VideoCallRoomServiceImpl implements VideoCallRoomService {
   private final JwtTokenUtil jwtTokenUtil;
   
   @Override
-  public VideoCallRoom getRandomRoom(HttpServletRequest httpServletRequest) {
+  public VideoCallRoom getRandomRoom() {
     List<VideoCallRoom> foundRooms = repository.findByStatusRecordAndSecondParticipantIsNull('A')
       .orElseThrow(() -> new CustomException("Rooms not found", HttpStatus.NOT_FOUND));
+    
+    if (foundRooms.isEmpty()) {
+      throw new CustomException("Rooms not found", HttpStatus.NOT_FOUND);
+    }
     
     // Mengacak urutan elemen dalam daftar
     Collections.shuffle(foundRooms);
@@ -32,11 +36,10 @@ public class VideoCallRoomServiceImpl implements VideoCallRoomService {
     // Mengambil elemen pertama setelah diacak
     VideoCallRoom randomRoom = foundRooms.get(0);
     
-    final String header = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-    final String token = header.split(" ")[1].trim();
-    String userEmail = jwtTokenUtil.extractUsername(token);
+    UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    String username = principal.getUsername();
     
-    randomRoom.setSecondParticipant(userEmail);
+    randomRoom.setSecondParticipant(username);
     randomRoom.setUpdatedAt(new Date());
     
     repository.save(randomRoom);
@@ -44,14 +47,13 @@ public class VideoCallRoomServiceImpl implements VideoCallRoomService {
   }
   
   @Override
-  public void addRoom(HttpServletRequest httpServletRequest, String roomId) {
-    final String header = httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-    final String token = header.split(" ")[1].trim();
-    String userEmail = jwtTokenUtil.extractUsername(token);
+  public void addRoom(String roomId) {
+    UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    String username = principal.getUsername();
     
     VideoCallRoom newRoom = VideoCallRoom.builder()
       .roomId(roomId)
-      .firstParticipant(userEmail)
+      .firstParticipant(username)
       .secondParticipant(null)
       .statusRecord('A')
       .createdAt(new Date())
