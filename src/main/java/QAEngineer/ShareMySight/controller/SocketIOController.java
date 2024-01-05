@@ -41,7 +41,6 @@ public class SocketIOController {
   
   private ConnectListener onConnected() {
     return socketIOClient -> {
-      log.info("Socket ID[{}] Connected to socket", socketIOClient.getSessionId().toString());
       socketIOClient.sendEvent("me", socketIOClient.getSessionId().toString());
       
       String mySocketSessionId = socketIOClient.getSessionId().toString();
@@ -59,7 +58,6 @@ public class SocketIOController {
   private DisconnectListener onDisconnected() {
     return socketIOClient -> {
       String mySocketSessionId = socketIOClient.getSessionId().toString();
-      log.info("Client[{}] - Disconnected from socket", mySocketSessionId);
       socketIOClient.getNamespace().getBroadcastOperations().sendEvent("callEnded");
       videoCallSessionService.delete(mySocketSessionId);
     };
@@ -67,8 +65,6 @@ public class SocketIOController {
   
   private DataListener<CallUserRequest> onCallUser() {
     return (socketIOClient, callUserRequest, ackRequest) -> {
-      log.info("Call User[{}]", socketIOClient.getSessionId().toString());
-      log.info("Call User data >>> {}", callUserRequest);
       SocketIOClient targetedClient = server.getClient(UUID.fromString(callUserRequest.getUserToCall()));
       CallUserResponse callUserResponse = CallUserResponse.builder()
         .from(callUserRequest.getFrom())
@@ -84,7 +80,6 @@ public class SocketIOController {
   
   private DataListener<AnswerCallRequest> onAnswerCall() {
     return (socketIOClient, answerCallRequest, ackRequest) -> {
-      log.info("Call Answer from {}", socketIOClient.getSessionId().toString());
       SocketIOClient targetedClient = server.getClient(UUID.fromString(answerCallRequest.getTo()));
       targetedClient.sendEvent("callAccepted", answerCallRequest.getSignal());
     };
@@ -92,7 +87,6 @@ public class SocketIOController {
   
   private DataListener<RandomCallUserRequest> onCallRandom() {
     return (socketIOClient, randomCallUserRequest, ackRequest) -> {
-      log.info("Random call from {}", socketIOClient.getSessionId().toString());
       String mySocketSessionId = socketIOClient.getSessionId().toString();
       
       videoCallSessionService.updateToOpenCall(mySocketSessionId);
@@ -103,7 +97,6 @@ public class SocketIOController {
           (client) -> !Objects.equals(client.getSessionId().toString(), mySocketSessionId)
         )
         .toList();
-      log.info("otherClients >>>>>>>> {}", Arrays.toString(otherClients.toArray()));
       if (!otherClients.isEmpty()) {
         List<String> socketSessionIds = otherClients.stream()
           .map(client -> client.getSessionId().toString())
@@ -133,7 +126,6 @@ public class SocketIOController {
   
   private DataListener<AnswerCallRequest> onGoingRandomCall() {
     return (client, data, ackSender) -> {
-      log.info(">>>>>>>> {}", data.getTo());
       SocketIOClient targetedClient = server.getClient(UUID.fromString(data.getTo()));
       videoCallSessionService.updateToOnCall(targetedClient.getSessionId().toString());
       targetedClient.sendEvent("callAccepted", data.getSignal());
@@ -142,7 +134,6 @@ public class SocketIOController {
   
   private DataListener<AnswerCallRequest> onEndCall() {
     return (client, data, ackSender) -> {
-      log.info("to >>>>>>>> {}", data.getTo());
       videoCallSessionService.updateToCloseCall(client.getSessionId().toString());
       videoCallSessionService.updateToCloseCall(data.getTo());
       SocketIOClient targetedClient = server.getClient(UUID.fromString(data.getTo()));
