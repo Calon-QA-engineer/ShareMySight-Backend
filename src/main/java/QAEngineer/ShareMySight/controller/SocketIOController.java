@@ -4,6 +4,7 @@ import QAEngineer.ShareMySight.entity.VideoCallSession;
 import QAEngineer.ShareMySight.enums.VideoCallStatus;
 import QAEngineer.ShareMySight.model.request.AnswerCallRequest;
 import QAEngineer.ShareMySight.model.request.CallUserRequest;
+import QAEngineer.ShareMySight.model.request.RandomCallUserRequest;
 import QAEngineer.ShareMySight.model.response.CallUserResponse;
 import QAEngineer.ShareMySight.service.serviceInteface.VideoCallSessionService;
 import com.corundumstudio.socketio.SocketIOClient;
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -33,8 +33,10 @@ public class SocketIOController {
     server.addDisconnectListener(onDisconnected());
     server.addEventListener("callUser", CallUserRequest.class, onCallUser());
     server.addEventListener("answerCall", AnswerCallRequest.class, onAnswerCall());
-    server.addEventListener("startRandomCall", CallUserRequest.class, onCallRandom());
+    server.addEventListener("startRandomCall", RandomCallUserRequest.class, onCallRandom());
     server.addEventListener("goingRandomCall", AnswerCallRequest.class, onGoingRandomCall());
+    server.addEventListener("endCall", AnswerCallRequest.class, onEndCall());
+    server.addEventListener("cancelCall", RandomCallUserRequest.class, onCancelCall());
   }
   
   private ConnectListener onConnected() {
@@ -88,17 +90,8 @@ public class SocketIOController {
     };
   }
   
-  private DataListener<AnswerCallRequest> onGoingRandomCall() {
-    return (client, data, ackSender) -> {
-      log.info(">>>>>>>> {}", data.getTo());
-      SocketIOClient targetedClient = server.getClient(UUID.fromString(data.getTo()));
-      videoCallSessionService.updateToOnCall(targetedClient.getSessionId().toString());
-      targetedClient.sendEvent("callAccepted", data.getSignal());
-    };
-  }
-  
-  private DataListener<CallUserRequest> onCallRandom() {
-    return (socketIOClient, callUserRequest, ackRequest) -> {
+  private DataListener<RandomCallUserRequest> onCallRandom() {
+    return (socketIOClient, randomCallUserRequest, ackRequest) -> {
       log.info("Random call from {}", socketIOClient.getSessionId().toString());
       String mySocketSessionId = socketIOClient.getSessionId().toString();
       
@@ -107,7 +100,7 @@ public class SocketIOController {
       List<SocketIOClient> otherClients = server.getAllClients()
         .stream()
         .filter(
-        (client) -> !Objects.equals(client.getSessionId().toString(), mySocketSessionId)
+          (client) -> !Objects.equals(client.getSessionId().toString(), mySocketSessionId)
         )
         .toList();
       log.info("otherClients >>>>>>>> {}", Arrays.toString(otherClients.toArray()));
@@ -120,22 +113,47 @@ public class SocketIOController {
           VideoCallStatus.OPEN_CALL,
           'A'
         );
-        log.info("videoCallSessions >>>>>>>> {}", videoCallSessions);
         if (!videoCallSessions.isEmpty()) {
           Collections.shuffle(videoCallSessions);
           VideoCallSession videoCallSession = videoCallSessions.get(0);
           log.info("target socketSessionId >>>>>>>> {}", videoCallSession.getSocketSessionId());
           
           SocketIOClient targetedClient = server.getClient(UUID.fromString(videoCallSession.getSocketSessionId()));
-          log.info("callUserRequest.getSignalData >>>> {}", callUserRequest.getSignalData());
+          log.info("randomCallUserRequest.getSignalData >>>> {}", randomCallUserRequest.getSignalData());
           CallUserResponse callUserResponse = CallUserResponse.builder()
-            .from(callUserRequest.getFrom())
-            .name(callUserRequest.getName())
-            .signal(callUserRequest.getSignalData())
+            .from(randomCallUserRequest.getFrom())
+            .name(randomCallUserRequest.getName())
+            .signal(randomCallUserRequest.getSignalData())
             .build();
           targetedClient.sendEvent("startRandomCall", callUserResponse);
         }
       }
+    };
+  }
+  
+  private DataListener<AnswerCallRequest> onGoingRandomCall() {
+    return (client, data, ackSender) -> {
+      log.info(">>>>>>>> {}", data.getTo());
+      SocketIOClient targetedClient = server.getClient(UUID.fromString(data.getTo()));
+      videoCallSessionService.updateToOnCall(targetedClient.getSessionId().toString());
+      targetedClient.sendEvent("callAccepted", data.getSignal());
+    };
+  }
+  
+  private DataListener<AnswerCallRequest> onEndCall() {
+    return (client, data, ackSender) -> {
+      log.info("to >>>>>>>> {}", data.getTo());
+      videoCallSessionService.updateToCloseCall(client.getSessionId().toString());
+      videoCallSessionService.updateToCloseCall(data.getTo());
+      SocketIOClient targetedClient = server.getClient(UUID.fromString(data.getTo()));
+      targetedClient.sendEvent("endCall");
+    };
+  }
+  
+  private DataListener<RandomCallUserRequest> onCancelCall() {
+    return (client, data, ackSender) -> {
+      log.info("Cancel call from {}", client.getSessionId().toString());
+      videoCallSessionService.updateToCloseCall(client.getSessionId().toString());
     };
   }
 }
