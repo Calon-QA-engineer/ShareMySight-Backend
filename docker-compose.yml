@@ -5,20 +5,9 @@ services:
     build: .
     restart: on-failure
     container_name: "app_backend_c"
-    depends_on:
-      - mongodb
     ports:
       - "8080:8080"
-    volumes:
-      - ./target/ShareMySight-0.0.1-SNAPSHOT.jar:/app.jar
-
-  mongodb:
-    image: mongo:latest
-    container_name: "mongodb"
-    ports:
-      - "27017:27017"
-    volumes:
-      - db:/data/db
-
-volumes:
-  db:
+    environment:
+      - AWS_ACCESS_KEY = ${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY = ${AWS_SECRET_KEY}
+      - OPEN_AI_KEY = ${OPEN_AI_KEY}

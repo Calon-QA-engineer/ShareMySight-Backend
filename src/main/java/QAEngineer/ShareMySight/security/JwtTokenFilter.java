@@ -34,20 +34,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        final String requestURI = request.getRequestURI();
-        if (
-            requestURI.endsWith("/swagger-ui/index.html")
-              || requestURI.endsWith("/swagger-ui.html")
-              || requestURI.endsWith("/v3/api-docs")
-              || requestURI.endsWith(".css")
-              || requestURI.endsWith(".js")
-              || requestURI.endsWith(".png")
-              || requestURI.endsWith("swagger-config")
-        ) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        
         // 1. check the jwt token
         String token = null;
         Cookie[] cookies = request.getCookies();
@@ -65,6 +51,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+
+        log.info(token);
 
         try {
             String userEmail = jwtTokenUtil.extractUsername(token);
