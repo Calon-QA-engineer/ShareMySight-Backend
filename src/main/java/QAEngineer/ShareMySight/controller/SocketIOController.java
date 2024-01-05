@@ -143,7 +143,6 @@ public class SocketIOController {
   
   private DataListener<RandomCallUserRequest> onCancelCall() {
     return (client, data, ackSender) -> {
-      log.info("Cancel call from {}", client.getSessionId().toString());
       videoCallSessionService.updateToCloseCall(client.getSessionId().toString());
     };
   }
