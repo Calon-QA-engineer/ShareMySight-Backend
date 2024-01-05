@@ -36,6 +36,7 @@ public class SocketIOController {
     server.addEventListener("startRandomCall", RandomCallUserRequest.class, onCallRandom());
     server.addEventListener("goingRandomCall", AnswerCallRequest.class, onGoingRandomCall());
     server.addEventListener("endCall", AnswerCallRequest.class, onEndCall());
+    server.addEventListener("cancelCall", RandomCallUserRequest.class, onCancelCall());
   }
   
   private ConnectListener onConnected() {
@@ -146,6 +147,13 @@ public class SocketIOController {
       videoCallSessionService.updateToCloseCall(data.getTo());
       SocketIOClient targetedClient = server.getClient(UUID.fromString(data.getTo()));
       targetedClient.sendEvent("endCall");
+    };
+  }
+  
+  private DataListener<RandomCallUserRequest> onCancelCall() {
+    return (client, data, ackSender) -> {
+      log.info("Cancel call from {}", client.getSessionId().toString());
+      videoCallSessionService.updateToCloseCall(client.getSessionId().toString());
     };
   }
 }
