@@ -74,4 +74,15 @@ public class GlobalException {
           .status(HttpStatus.FORBIDDEN)
           .body(ErrorMessageResponse.builder().message(ex.getMessage()).build());
     }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> handleGenericException(Exception ex) {
+        StandardResponse<Object> response = StandardResponse.<Object>builder()
+                .status(false)
+                .message("An unexpected error occurred: " + ex)
+                .data(null)
+                .build();
+
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
