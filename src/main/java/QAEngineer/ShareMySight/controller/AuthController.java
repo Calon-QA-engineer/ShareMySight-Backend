@@ -45,10 +45,10 @@ public class AuthController {
         // Set the "access_token" cookie in the response
         Cookie cookie = new Cookie("access_token", authToken.getToken());
         cookie.setPath("/");
-        cookie.setHttpOnly(false);
-        cookie.setSecure(true);
         cookie.setDomain("sharemysight.productapic1.com");
-        response.addCookie(cookie);
+        String setCookieHeader = String.format("%s=%s; Path=%s; Domain=%s; Secure; SameSite=None",
+                cookie.getName(), cookie.getValue(), cookie.getPath(), cookie.getDomain());
+        response.addHeader("Set-Cookie", setCookieHeader);
 
         StandardResponse<AuthenticationResponse> responseBody = StandardResponse.<AuthenticationResponse>builder()
                 .status(true)
