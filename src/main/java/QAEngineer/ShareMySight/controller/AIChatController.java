@@ -18,6 +18,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "ai-chat")
+@Slf4j
 public class AIChatController {
     private final AIChatService aiChatService;
 
@@ -39,6 +40,7 @@ public class AIChatController {
             @RequestParam("file") MultipartFile file,
             @RequestParam("text") String text
     ) {
+        log.info("test");
         AIUploadResponse message = aiChatService.upload(file, text);
 
         StandardResponse<AIUploadResponse> response = StandardResponse.<AIUploadResponse>builder()

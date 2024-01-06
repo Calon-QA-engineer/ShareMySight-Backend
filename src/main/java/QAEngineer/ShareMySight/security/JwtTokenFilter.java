@@ -20,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
@@ -34,9 +35,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+
         // 1. check the jwt token
         String token = null;
         Cookie[] cookies = request.getCookies();
+
+        log.info(Arrays.toString(cookies));
 
         if (cookies != null) {
             for (Cookie cookie : cookies) {

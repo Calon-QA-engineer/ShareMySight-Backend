@@ -14,6 +14,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +31,7 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AIChatServiceImpl implements AIChatService {
     private final AmazonS3 amazonS3;
     private final AIChatRepository aiChatRepository;
@@ -55,6 +57,7 @@ public class AIChatServiceImpl implements AIChatService {
             uploadFileTos3bucket(fileName, file);
             file.delete();
         } catch (Exception e) {
+            log.info(String.valueOf(e));
             throw new CustomException("File upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

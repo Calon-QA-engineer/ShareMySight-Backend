@@ -2,6 +2,7 @@ package QAEngineer.ShareMySight.exception;
 
 import QAEngineer.ShareMySight.model.response.ErrorMessageResponse;
 import QAEngineer.ShareMySight.model.response.StandardResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Slf4j
 public class GlobalException {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<StandardResponse<Object>> handleCustomException(CustomException ex) {
@@ -77,6 +79,7 @@ public class GlobalException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception ex) {
+        log.info(String.valueOf(ex));
         StandardResponse<Object> response = StandardResponse.<Object>builder()
                 .status(false)
                 .message("An unexpected error occurred: " + ex)

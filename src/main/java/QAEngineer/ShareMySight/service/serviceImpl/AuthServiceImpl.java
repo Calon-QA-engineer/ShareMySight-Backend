@@ -10,6 +10,7 @@ import QAEngineer.ShareMySight.repository.LanguageRepository;
 import QAEngineer.ShareMySight.repository.UserRepository;
 import QAEngineer.ShareMySight.security.JwtTokenUtil;
 import QAEngineer.ShareMySight.service.serviceInteface.AuthService;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,6 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("User already registered");
         }
 
-
         // Fetch the language using languageId from the request
         Language language = languageRepository.findById(request.getLanguageId())
                 .orElseThrow(() -> new CustomException("Language not found", HttpStatus.NOT_FOUND));
@@ -75,6 +75,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         String jwtToken = jwtTokenUtil.generateToken(user.get());
+
         return AuthenticationResponse.builder()
                 .email(user.get().getEmail())
                 .token(jwtToken)
