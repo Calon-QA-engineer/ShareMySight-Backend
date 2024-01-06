@@ -14,11 +14,16 @@ import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
 @Slf4j
 @Component
+@RestController
+@RequestMapping("/socket.io")
 public class SocketIOController {
   private final SocketIOServer server;
   private final VideoCallSessionService videoCallSessionService;
@@ -39,6 +44,7 @@ public class SocketIOController {
     server.addEventListener("cancelCall", RandomCallUserRequest.class, onCancelCall());
   }
   
+  @GetMapping
   private ConnectListener onConnected() {
     return socketIOClient -> {
       socketIOClient.sendEvent("me", socketIOClient.getSessionId().toString());
