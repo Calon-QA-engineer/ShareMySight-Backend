@@ -35,7 +35,10 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-
+        if (request.getRequestURI().startsWith("/socket-io")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // 1. check the jwt token
         String token = null;
         Cookie[] cookies = request.getCookies();
