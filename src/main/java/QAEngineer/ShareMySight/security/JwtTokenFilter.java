@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -35,10 +36,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       @NonNull HttpServletResponse response,
       @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        if (request.getRequestURI().startsWith("/socket.io")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         // 1. check the jwt token
         String token = null;
         Cookie[] cookies = request.getCookies();
@@ -59,7 +56,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.info(token);
+        log.info("token >>> {}", token);
 
         try {
             String userEmail = jwtTokenUtil.extractUsername(token);
