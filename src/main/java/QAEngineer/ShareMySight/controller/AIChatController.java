@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "ai-chat")
+@RequestMapping(value = "app/ai-chat")
 @Slf4j
 public class AIChatController {
     private final AIChatService aiChatService;

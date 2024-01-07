@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "Video Call")
 @RestController
 @RequiredArgsConstructor
-@RequestMapping(value = "video-call")
+@RequestMapping(value = "app/video-call")
 public class VideoCallController {
   private final VideoCallRoomService videoCallRoomService;
   
