@@ -1,6 +1,7 @@
 package QAEngineer.ShareMySight.model.request;
 
 import QAEngineer.ShareMySight.model.SignalDataDto;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
