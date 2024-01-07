@@ -44,8 +44,7 @@ public class SecurityConfig {
             "/swagger-ui.html",
             "/register",
             "/login",
-            "/test",
-            "/**"
+            "/socket.io"
     };
 
     @Bean
