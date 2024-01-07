@@ -14,7 +14,7 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**").allowedOrigins( "http://localhost:3000").allowCredentials(true);
         registry
           .addMapping("/**")
-          .allowedOrigins("https://share-my-sight-frontend-eight.vercel.app")
+          .allowedOrigins("https://share-my-sight.vercel.app")
           .allowCredentials(true);
     }
 }
