@@ -14,16 +14,11 @@ import com.corundumstudio.socketio.listener.DataListener;
 import com.corundumstudio.socketio.listener.DisconnectListener;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
 @Slf4j
 @Component
-@RestController
-@RequestMapping("/socket.io")
 public class SocketIOController {
   private final SocketIOServer server;
   private final VideoCallSessionService videoCallSessionService;
@@ -44,8 +39,7 @@ public class SocketIOController {
     server.addEventListener("cancelCall", RandomCallUserRequest.class, onCancelCall());
   }
   
-  @GetMapping
-  private ConnectListener onConnected() {
+  public ConnectListener onConnected() {
     return socketIOClient -> {
       socketIOClient.sendEvent("me", socketIOClient.getSessionId().toString());
       
@@ -61,7 +55,7 @@ public class SocketIOController {
     };
   }
   
-  private DisconnectListener onDisconnected() {
+  public DisconnectListener onDisconnected() {
     return socketIOClient -> {
       String mySocketSessionId = socketIOClient.getSessionId().toString();
       socketIOClient.getNamespace().getBroadcastOperations().sendEvent("callEnded");
@@ -69,7 +63,7 @@ public class SocketIOController {
     };
   }
   
-  private DataListener<CallUserRequest> onCallUser() {
+  public DataListener<CallUserRequest> onCallUser() {
     return (socketIOClient, callUserRequest, ackRequest) -> {
       SocketIOClient targetedClient = server.getClient(UUID.fromString(callUserRequest.getUserToCall()));
       CallUserResponse callUserResponse = CallUserResponse.builder()
@@ -84,14 +78,14 @@ public class SocketIOController {
     };
   }
   
-  private DataListener<AnswerCallRequest> onAnswerCall() {
+  public DataListener<AnswerCallRequest> onAnswerCall() {
     return (socketIOClient, answerCallRequest, ackRequest) -> {
       SocketIOClient targetedClient = server.getClient(UUID.fromString(answerCallRequest.getTo()));
       targetedClient.sendEvent("callAccepted", answerCallRequest.getSignal());
     };
   }
   
-  private DataListener<RandomCallUserRequest> onCallRandom() {
+  public DataListener<RandomCallUserRequest> onCallRandom() {
     return (socketIOClient, randomCallUserRequest, ackRequest) -> {
       String mySocketSessionId = socketIOClient.getSessionId().toString();
       
@@ -130,15 +124,20 @@ public class SocketIOController {
     };
   }
   
-  private DataListener<AnswerCallRequest> onGoingRandomCall() {
+  public DataListener<AnswerCallRequest> onGoingRandomCall() {
     return (client, data, ackSender) -> {
       SocketIOClient targetedClient = server.getClient(UUID.fromString(data.getTo()));
       videoCallSessionService.updateToOnCall(targetedClient.getSessionId().toString());
-      targetedClient.sendEvent("callAccepted", data.getSignal());
+      CallUserResponse callUserResponse = CallUserResponse.builder()
+        .from(client.getSessionId().toString())
+        .name("")
+        .signal(data.getSignal())
+        .build();
+      targetedClient.sendEvent("callAccepted", callUserResponse);
     };
   }
   
-  private DataListener<AnswerCallRequest> onEndCall() {
+  public DataListener<AnswerCallRequest> onEndCall() {
     return (client, data, ackSender) -> {
       videoCallSessionService.updateToCloseCall(client.getSessionId().toString());
       videoCallSessionService.updateToCloseCall(data.getTo());
@@ -147,7 +146,7 @@ public class SocketIOController {
     };
   }
   
-  private DataListener<RandomCallUserRequest> onCancelCall() {
+  public DataListener<RandomCallUserRequest> onCancelCall() {
     return (client, data, ackSender) -> {
       videoCallSessionService.updateToCloseCall(client.getSessionId().toString());
     };
