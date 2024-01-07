@@ -42,9 +42,9 @@ public class SecurityConfig {
             "/configuration/security",
             "/swagger-ui/**",
             "/swagger-ui.html",
-            "/register",
-            "/login",
-            "/language"
+            "/app/register",
+            "/app/login",
+            "/app/language"
     };
 
     @Bean
@@ -54,7 +54,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(req ->
                     req.requestMatchers(WHITE_LIST_URL)
                             .permitAll()
-                            .requestMatchers(HttpMethod.GET,"/language")
+                            .requestMatchers(HttpMethod.GET,"/app/language")
                             .permitAll()
                             .anyRequest()
                             .authenticated()
