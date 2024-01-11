@@ -10,9 +10,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class })
 @EnableMongoRepositories(basePackageClasses = UserRepository.class)
 public class ShareMySightApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ShareMySightApplication.class, args);
 	}
-
 }
