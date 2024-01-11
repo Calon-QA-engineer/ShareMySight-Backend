@@ -18,7 +18,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;

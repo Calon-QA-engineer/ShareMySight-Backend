@@ -14,7 +14,6 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class VideoCallSessionServiceImpl implements VideoCallSessionService {
   private final VideoCallSessionRepository repository;
   

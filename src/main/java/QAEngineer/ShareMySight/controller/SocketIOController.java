@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Slf4j
 @Component
 public class SocketIOController {
   private final SocketIOServer server;
@@ -109,10 +108,8 @@ public class SocketIOController {
         if (!videoCallSessions.isEmpty()) {
           Collections.shuffle(videoCallSessions);
           VideoCallSession videoCallSession = videoCallSessions.get(0);
-          log.info("target socketSessionId >>>>>>>> {}", videoCallSession.getSocketSessionId());
-          
+
           SocketIOClient targetedClient = server.getClient(UUID.fromString(videoCallSession.getSocketSessionId()));
-          log.info("randomCallUserRequest.getSignalData >>>> {}", randomCallUserRequest.getSignalData());
           CallUserResponse callUserResponse = CallUserResponse.builder()
             .from(randomCallUserRequest.getFrom())
             .name(randomCallUserRequest.getName())

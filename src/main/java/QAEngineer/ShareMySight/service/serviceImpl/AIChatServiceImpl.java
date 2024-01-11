@@ -31,7 +31,6 @@ import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class AIChatServiceImpl implements AIChatService {
     private final AmazonS3 amazonS3;
     private final AIChatRepository aiChatRepository;
@@ -57,7 +56,6 @@ public class AIChatServiceImpl implements AIChatService {
             uploadFileTos3bucket(fileName, file);
             file.delete();
         } catch (Exception e) {
-            log.info(String.valueOf(e));
             throw new CustomException("File upload failed", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 

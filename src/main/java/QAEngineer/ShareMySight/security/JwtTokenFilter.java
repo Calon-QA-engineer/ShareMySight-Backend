@@ -25,7 +25,6 @@ import java.util.Arrays;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsService userDetailsService;
