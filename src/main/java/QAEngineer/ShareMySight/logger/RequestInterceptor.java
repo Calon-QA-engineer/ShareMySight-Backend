@@ -15,6 +15,7 @@ public class RequestInterceptor implements HandlerInterceptor {
         long startTime = Instant.now().toEpochMilli();
         log.info("Request URL=" + request.getRequestURL().toString() +
                 ":: Request Method=" + request.getMethod() +
+                ":: Client Address=" + request.getRemoteAddr() +
                 ":: Start Time=" + Instant.now());
         request.setAttribute("startTime", startTime);
         return true;
@@ -24,6 +25,6 @@ public class RequestInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         long startTime = (Long) request.getAttribute("startTime");
         // Log response details
-        log.info("Request URL={}:: Request Method={}:: Response with status={}:: Time Taken={}ms", request.getRequestURL().toString(), request.getMethod(), response.getStatus(), (Instant.now().toEpochMilli() - startTime));
+        log.info("Request URL={}:: Request Method={}:: Response with status={}::Client Address={} ::Time Taken={}ms", request.getRequestURL().toString(), request.getMethod(), response.getStatus(), request.getRemoteAddr(), (Instant.now().toEpochMilli() - startTime));
     }
 }
