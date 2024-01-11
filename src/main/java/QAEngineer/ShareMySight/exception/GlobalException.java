@@ -21,7 +21,7 @@ import java.util.Map;
 public class GlobalException {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorMessageResponse> handleCustomException(CustomException ex) {
-        log.info("CustomException: {}", ex.getMessage());
+        log.warn("CustomException: {}", ex.getMessage());
         return ResponseEntity
                 .status(ex.getCode())
                 .body(ErrorMessageResponse.builder().message(ex.getMessage()).build());
@@ -29,7 +29,7 @@ public class GlobalException {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleTypeMismatchException(MethodArgumentTypeMismatchException ex) {
-        log.info("MethodArgumentTypeMismatchException: {}", ex.getMessage());
+        log.warn("MethodArgumentTypeMismatchException: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorMessageResponse.builder().message(ex.getMessage()).build());
@@ -37,7 +37,7 @@ public class GlobalException {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
-        log.info("IllegalArgumentException: {}", ex.getMessage());
+        log.warn("IllegalArgumentException: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorMessageResponse.builder().message(ex.getMessage()).build());
@@ -47,7 +47,7 @@ public class GlobalException {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        log.info("MethodArgumentNotValidException: {}", ex.getMessage());
+        log.warn("MethodArgumentNotValidException: {}", ex.getMessage());
         Map<String, String> errorMap = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(fieldError -> {
             errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
@@ -57,7 +57,7 @@ public class GlobalException {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorMessageResponse> handleBadCredentialsException(BadCredentialsException ex) {
-        log.info("BadCredentialsException: {}", ex.getMessage());
+        log.warn("BadCredentialsException: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(ErrorMessageResponse.builder().message("Invalid email or password").build());
@@ -65,7 +65,7 @@ public class GlobalException {
 
     @ExceptionHandler(DisabledException.class)
     public ResponseEntity<ErrorMessageResponse> handleDisabledException(DisabledException ex) {
-        log.info("DisabledException: {}", ex.getMessage());
+        log.warn("DisabledException: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body(ErrorMessageResponse.builder().message(ex.getMessage()).build());
@@ -73,7 +73,7 @@ public class GlobalException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleGenericException(Exception ex) {
-        log.info("Internal Error: {}", ex.getMessage());
+        log.error("Internal Error: {}", ex.getMessage());
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ErrorMessageResponse.builder().message(ex.getMessage()).build());

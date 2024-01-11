@@ -40,8 +40,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         String token = null;
         Cookie[] cookies = request.getCookies();
 
-        log.info(Arrays.toString(cookies));
-
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("access_token".equals(cookie.getName())) {
@@ -55,8 +53,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-
-        log.info("token >>> {}", token);
 
         try {
             String userEmail = jwtTokenUtil.extractUsername(token);
